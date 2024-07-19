@@ -11,7 +11,7 @@
     </header>
    <nav>
         {#each bandtypes as band}
-            <a href="/main/{band.number}">{band.number} bands</a>
+            <a href="/main/{band.number}">{band.number} Bands</a>
         {/each}
     </nav>
     <div class="content">

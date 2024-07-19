@@ -8,13 +8,22 @@
         return e.split(":")[0]
     })
 
+    let border_colors = bands.map((e) => {
+        let val = e.split(":")[0];
+        if (val !== "none") {
+            return "black"
+        }
+
+        return val
+    })
+
 </script>
 
 <main>
     <!-- svelte-ignore a11y-img-redundant-alt -->
     <img src={resistor} alt="image of resistor">
     {#each band_positions as pos, num}
-        <div class="band" style="left: {pos}%; background-color: {band_colors[num]};"></div>
+        <div class="band" style="left: {pos}%; background-color: {band_colors[num]}; border: 1px solid {border_colors[num]};"></div>
     {/each}
     
 </main>
@@ -23,8 +32,10 @@
     main {
         background-color: rgb(199, 196, 196);
         width: 100%;
+        height: 100%;
         display: flex;
         position: relative;
+        margin-bottom: 10px;
     }
 
     img {
@@ -36,6 +47,5 @@
         left: 10%;
         height: 100%;
         width: 15px;
-        border: 1px solid black;
     }
 </style>

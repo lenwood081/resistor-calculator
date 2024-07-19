@@ -12,10 +12,10 @@ export async function load({ params }) {
     }
     
     return {
-        band: band,
-        colors: colors,
-        multiplier: multiplier,
-        tolerance: tolerance,
-        ppm: ppm
+        Band: band,
+        Colors: colors,
+        Multiplier: multiplier,
+        Tolerance: tolerance,
+        Ppm: ppm
     }
 }
