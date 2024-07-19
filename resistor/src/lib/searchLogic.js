@@ -1,15 +1,31 @@
 import { colors, multiplier, tolerance, ppm} from "$lib/data/bands.json"
 import { error } from "@sveltejs/kit";
 
-// @ts-ignore
-export function search(rows, value, ppm) {
+export function search(rows, value) {
     // find greater than multiplier
     let multiIndex = -1;
     const finalValue = value
     let runningValue = 0
 
-    /* TODO: Less than 1 case */
 
+    /* Less than 0.01 case: assign all black */
+    if (value < multiplier[0].value)
+    {
+        // essentually zero
+        return {
+            multi: 0,
+            color: [0, 0, 0],
+            toler: 0,
+            value: 0
+        } 
+    }
+
+    /* check for really low values */
+    for (let i = 0; multiplier[i].value <= value; i++) {
+        multiIndex = i;
+        if (i === multiplier.length-1) break;
+    }
+    
     for (let i = 0; multiplier[i].value*Math.pow(10,rows-1) <= value; i++) {
         multiIndex = i;
         if (i === multiplier.length-1) break;
@@ -19,6 +35,7 @@ export function search(rows, value, ppm) {
         throw error(501);
     }
 
+    console.log(multiIndex)
     value = value/multiplier[multiIndex].value;
 
     //round value
@@ -64,6 +81,7 @@ export function search(rows, value, ppm) {
     return {
         multi: multiIndex,
         color: colorsIndex,
-        toler: toleranceIndex
+        toler: toleranceIndex,
+        value: runningValue
     }
 }
