@@ -2,8 +2,11 @@
     import {search} from '$lib/searchLogic';
     import Resistor from '$lib/resistor.svelte';
     import { afterNavigate, beforeNavigate } from '$app/navigation';
+    import { onMount } from 'svelte';
 
     export let data
+
+    
 
     let change = false; // idicates that the fields hav been edited
 
@@ -18,7 +21,27 @@
 
     /* for visuals */
     let lines = [];
+    
+    /* for running final value */
+    let current_resistance = inputValue;
 
+    $: (() =>{
+        let prefix = 0
+        
+        console.log(prefix)
+        if (bandNum === 4) {
+            prefix += Number(values[1].split(":")[1])
+            prefix += Number(values[0].split(":")[1]) * 10
+            current_resistance = prefix * Number(values[2].split(":")[1])    
+        } else if (bandNum === 5 || bandNum === 6) {
+            prefix += Number(values[2].split(":")[1])
+            prefix += Number(values[1].split(":")[1]) * 10
+            prefix += Number(values[0].split(":")[1]) * 100
+            current_resistance = prefix * Number(values[3].split(":")[1])
+        } 
+    }) ()
+
+    /* resets everythig before redirected */
     beforeNavigate(() => {
         /* reset values */
         change = false;
@@ -27,9 +50,13 @@
         input = search(colorNum, inputValue)  
     })
 
-    /* runs after mount or on url reloccation */
+    /* runs after mount on url reloccation */
     afterNavigate(() => {
         change = true
+    })
+    /* need on first run case */
+    onMount(() => {
+        change = true;
     })
 
     $: (() => {
@@ -59,14 +86,14 @@
         lines.push(values[0])
         lines.push(values[1])
         if (bandNum === 4) { 
-            lines.push("none: ")
+            lines.push("none: 0")
             lines.push(values[2])
-            lines.push("none: ")
+            lines.push("none: 0")
             lines.push(values[3])
         } else if (bandNum === 5) {
             lines.push(values[2])
             lines.push(values[3])
-            lines.push("none: ")
+            lines.push("none: 0")
             lines.push(values[4])
         } else if (bandNum === 6) {
             lines.push(values[2])
@@ -98,13 +125,13 @@
                 {/each}
             </select>
         {/each}
-        <label for="ohms">Resistance (Ohms)</label>
+        <label for="ohms">Search Resistance (Ohms)</label>
         <input name="ohms" id="oInput" type="number" bind:value={inputValue} min=0.01 max=2147483646 
                     on:input={() => change = false}
                     on:change={() => change = true}> 
     </div>
     <div class="visual">
-        <h2>This is the resistance</h2>
+        <h2>{current_resistance} (ohms)</h2>
 
         {#key lines}
             <Resistor bands={lines} />
@@ -145,10 +172,12 @@
 
     select, input {
         font-size: 1rem;
+        font-weight: bold;
     }
 
     input {
         text-indent: 3px;
+        color: rgb(118, 118, 118);
     }
 
     label {

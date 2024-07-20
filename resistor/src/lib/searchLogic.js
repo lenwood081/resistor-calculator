@@ -35,7 +35,6 @@ export function search(rows, value) {
         throw error(501);
     }
 
-    console.log(multiIndex)
     value = value/multiplier[multiIndex].value;
 
     //round value
